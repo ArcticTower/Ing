@@ -18,7 +18,7 @@ java -jar Ing.jar file.csv
 
 run "./buildDockerContainer.sh" to get container
 
-run "runWithFile.sh your_file" to send your_file to container and get result
+run "./runWithFile.sh your_file" to send your_file to container and get result
 
 result will be saved in your host as "result.txt"
 
