@@ -18,9 +18,9 @@ java -jar Ing.jar file.csv
 
 run "./buildDockerContainer.sh" to get container
 
-run "./runWithFile.sh your_file" to send your_file to container and get result
+run "./runWithFile.sh your_file" to send your_file to container and get a result
 
-result will be saved in your host as "result.txt"
+The result will be saved in your host as "result.txt"
 
 run "./deleteContainer.sh" if you want to delete cantainer
 
