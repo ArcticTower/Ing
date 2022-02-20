@@ -44,12 +44,7 @@ public class GroupHandler {
     }
 
     public void sort(){
-        Comparator<Group> C = new Comparator<Group>(){
-            @Override
-            public int compare(Group group, Group t1) {
-                return group.compare(t1);
-            }
-        };
+        Comparator<Group> C = Group::compare;
 
         groupList.sort(C.reversed());
 

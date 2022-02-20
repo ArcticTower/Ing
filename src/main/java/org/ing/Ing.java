@@ -100,12 +100,17 @@ public class Ing {
 
         //print result to file
         //todo: put into parallel thread stream
-        String resFileName = "result"+startAllTime+".txt";
+        String resFileName = "result.txt";
         File resultFile = new File(resFileName);
         try{
             boolean r = resultFile.createNewFile();
             if(!r){
-                System.out.println("Невозможно сохранить файл, он уже существует!");
+                 r =resultFile.delete();
+                 if(!r){
+                     System.out.println("Невозможно перезаписать файл вывода!");
+                     return;
+                 }
+                 r = resultFile.createNewFile();
             }
             FileWriter wf = new FileWriter(resultFile);
             BufferedWriter bf = new BufferedWriter(wf);

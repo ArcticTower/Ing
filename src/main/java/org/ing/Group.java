@@ -1,8 +1,5 @@
 package org.ing;
 
-import org.jetbrains.annotations.NotNull;
-
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -43,7 +40,7 @@ public class Group {
     }
 
     //comparator is for sorting
-    public int compare(@NotNull Group g){
+    public int compare(Group g){
         int len = length();
         int glen = g.length();
         if(len == glen) return 0;
