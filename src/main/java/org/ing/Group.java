@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 public class Group {
     private final int id;
-    private HashSet<String> tokens = new HashSet<String>(3,0.6f);
+    private HashSet<String> tokens = new HashSet<>(3, 0.6f);
     private HashSet<HashSet<String>> strings = new HashSet<>();
     private int stringCounter;
     private int elementCounter;

@@ -15,7 +15,7 @@ public class GroupHandler {
         currentGroupId = 1;
         groupCounter = 0;
         bigGroupCounter =0;
-        groupList = new ArrayList<Group>();
+        groupList = new ArrayList<>();
 //        groupIdAndTokens = new HashMap<>(200,0.75f);
         bigGroupsId = new ArrayList<>();
     }

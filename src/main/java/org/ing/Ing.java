@@ -90,7 +90,7 @@ public class Ing {
         System.out.println("Групп всего: \t\t"+ groupHandler.getGroupCounter());
         System.out.println("Строк всего: \t\t"+ stringHandler.getStringCounter());
         //todo: put errors into parallel thread stream
-        System.out.println("Строк забраковано: \t"+stringHandler.getBadStringCouner());
+        System.out.println("Строк забраковано: \t"+stringHandler.getBadStringCounter());
         System.out.println("Забракованные строки: ");
         LinkedList<String> badstr = stringHandler.getBadStrings();
         for (String s : badstr){
@@ -111,6 +111,10 @@ public class Ing {
                      return;
                  }
                  r = resultFile.createNewFile();
+                 if(!r){
+                     System.out.println("Невозможно перезаписать файл вывода!");
+                     return;
+                 }
             }
             FileWriter wf = new FileWriter(resultFile);
             BufferedWriter bf = new BufferedWriter(wf);

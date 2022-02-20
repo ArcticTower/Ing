@@ -13,7 +13,7 @@ public class StringHandler {
     private String target_string;
     private int stringCounter;
     private int validStringCounter;
-    private int badStringCouner;
+    private int badStringCounter;
     private HashMap<String,Integer> stringIdAndTokens;
     private final GroupHandler groupHandler;
     private LinkedList<String> badStrings;
@@ -22,16 +22,16 @@ public class StringHandler {
         this.groupHandler = groupHandler;
         stringCounter = 0;
         validStringCounter=0;
-        badStringCouner=0;
+        badStringCounter =0;
         stringIdAndTokens = new HashMap<>(100000,0.75f);
         badStrings = new LinkedList<>();
     }
 
     private void tokenizeString(){
 
-        LinkedList<Integer> groupIdsToAdd = new LinkedList<Integer>();
+        LinkedList<Integer> groupIdsToAdd = new LinkedList<>();
         ArrayList<String> list = new ArrayList<>();
-        ArrayList<String> noGroupTokens = new ArrayList<String>();
+        ArrayList<String> noGroupTokens = new ArrayList<>();
         boolean createNweGroup = false;
         StringTokenizer tokenizer = new StringTokenizer(target_string,";",false);
 
@@ -39,7 +39,7 @@ public class StringHandler {
         int amount = tokenizer.countTokens();
         //string with 1 element should be skipped by task
         if(amount<2){
-            badStringCouner++;
+            badStringCounter++;
             badStrings.add(stringCounter+" : "+target_string);
             return;
         }
@@ -53,7 +53,7 @@ public class StringHandler {
             }
             //only valid element is "[0-9]+"
             if(!str.matches("^\"\\d+\"$")){
-                badStringCouner++;
+                badStringCounter++;
                 badStrings.add(stringCounter+" : "+target_string);
                 return;
             }
@@ -94,8 +94,8 @@ public class StringHandler {
     public int getValidStringCounter(){
         return validStringCounter;
     }
-    public int getBadStringCouner(){
-        return badStringCouner;
+    public int getBadStringCounter(){
+        return badStringCounter;
     }
     public LinkedList<String> getBadStrings(){
         return badStrings;
