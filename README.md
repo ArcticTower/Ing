@@ -1,11 +1,16 @@
 # Ing
 Test task for work
+
 ###To run in your PC:
+
 require:
+
   java 11
   
 usage:
+
 java -jar Ing.jar file.csv
+
 
 ###To run in docker:
 
