@@ -40,11 +40,13 @@ public class Ing {
         }
 
         //read file
+        //todo: put into parallel thread stream
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
         long startTime = System.nanoTime();
         try {
             while ((line = bufferedReader.readLine()) != null) {
+                //todo: put calc into parallel thread stream
                 stringHandler.addString(line);
             }
         } catch (IOException e) {
@@ -87,6 +89,7 @@ public class Ing {
         }
         System.out.println("Групп всего: \t\t"+ groupHandler.getGroupCounter());
         System.out.println("Строк всего: \t\t"+ stringHandler.getStringCounter());
+        //todo: put errors into parallel thread stream
         System.out.println("Строк забраковано: \t"+stringHandler.getBadStringCouner());
         System.out.println("Забракованные строки: ");
         LinkedList<String> badstr = stringHandler.getBadStrings();
@@ -96,6 +99,7 @@ public class Ing {
         System.out.println("Строк одобрено: \t"+stringHandler.getValidStringCounter());
 
         //print result to file
+        //todo: put into parallel thread stream
         String resFileName = "result"+startAllTime+".txt";
         File resultFile = new File(resFileName);
         try{
