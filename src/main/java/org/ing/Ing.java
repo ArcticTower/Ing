@@ -1,191 +1,201 @@
 package org.ing;
 
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-
 public class Ing {
-    static GroupHandler groupHandler;
-    static StringHandler stringHandler;
 
     public static void main(String[] args) {
-        long startAllTime = System.nanoTime();
-        groupHandler = new GroupHandler();
 
-        //check if input correct
-        if(args.length<1){
-            System.out.println("Укажите файл аргументом программы, можно указать выражение для его валидации");
-            System.out.println("Пример: java -jar Ing.jar lng.csv ^\\d+$");
-            System.exit(1);
-        }
-        String regx = null;
-        if (args.length<2){
-            regx = "^\"\\d+\"$";
-        }
-        if(args.length == 2){
-            regx = args[1];
-            try{
-                Pattern.compile(regx);
-            } catch (PatternSyntaxException exception){
-                System.out.println("Выражения для проверки не валидно!");
-                return;
-            }
-        }
-        if(regx!=null)
-            stringHandler = new StringHandler(groupHandler, regx);
-        else
-            stringHandler = new StringHandler(groupHandler);
-        String fileName = args[0];
-
-        System.out.println("Ing v1.2");
-        System.out.println("Обработка файла: "+fileName);
-
-        //open file for input
-        Scanner scanner = null;
-        FileInputStream fileInputStream = null;
-        try{
-            fileInputStream = new FileInputStream(fileName);
-            scanner = new Scanner(fileInputStream);
-        } catch (FileNotFoundException e) {
-            System.out.println("Файл не найден!");
-            e.printStackTrace();
-            return;
-        }
-
-//        File file = new File(fileName);
-//        FileReader fileReader;
-//        try{
-//            fileReader = new FileReader(file);
-//        } catch (FileNotFoundException e) {
-//            System.out.println("Файл не найден!");
-//            return;
-//        }
-//        if (!file.canRead()){
-//            System.out.println("Невозможно прочитать файл!");
-//            return;
-//        }
         long startTime = System.nanoTime();
-        //read file
-        try{
-            while (scanner.hasNextLine()){
-                stringHandler.addString (scanner.nextLine());
-            }
-            if(scanner.ioException()!=null){
-                System.out.println("ошибка вывода файла");
+        String fileName;
+        String reg = "^\"\\d+\"$";
+
+        if (args.length<1){
+            System.out.println("Usage:");
+            System.out.println("java -jar Ing.jar file reg_exp");
+            return;
+        }
+
+            fileName = args[0];
+
+        if (args.length>=2){
+            reg = args[1];
+            try{
+                Pattern.compile(reg);
+            } catch (PatternSyntaxException exception){
+                System.out.println("reg_exp not valid!");
                 return;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка");
+        }
+        File file;
+        if(fileName == null){
+            System.out.println("File not valid");
             return;
+        }else{
+            file = new File(fileName);
         }
 
-        try {
-            fileInputStream.close();
-            scanner.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Ошибка!");
-            return;
-        }
-        //todo: put into parallel thread stream
-//        BufferedReader bufferedReader = new BufferedReader(fileReader);
-//        String line;
-
-//        try {
-//            while ((line = bufferedReader.readLine()) != null) {
-//                //todo: put calc into parallel thread stream
-//                stringHandler.addString(line);
-//            }
-//        } catch (IOException e) {
-//            System.out.println("Ошибка ввода!");
-//            e.printStackTrace();
-//            return;
-//        }
-//        try{
-//            bufferedReader.close();
-//        } catch (IOException e) {
-//            System.out.println("Ошибка вывода!");
-//            e.printStackTrace();
-//        }
-//        try{
-//            fileReader.close();
-//        } catch (IOException e) {
-//            System.out.println("Ошибка вывода!");
-//            e.printStackTrace();
-//        }
-
-        //print output
-        long endTime = System.nanoTime();
-        long elapsedTime = endTime-startTime;
-        double elapsedTimeSeconds =(double) elapsedTime/1_000_000_000;
-        System.out.println("Файл обработан за "+elapsedTimeSeconds+" секунд");
-        System.out.println("Число групп с более чем 1 элементом: "+groupHandler.getBigGroupCounter());
-        System.out.println("Групп всего: \t\t"+ groupHandler.getGroupCounter());
-        System.out.println("Строк всего: \t\t"+ stringHandler.getStringCounter());
-        //todo: put errors into parallel thread stream
-        System.out.println("Строк забраковано: \t"+stringHandler.getBadStringCounter());
-//        System.out.println("Забракованные строки: ");
-//        LinkedList<String> badstr = stringHandler.getBadStrings();
-//        for (String s : badstr){
-//            System.out.println(s);
-//        }
-        System.out.println("Строк одобрено: \t"+stringHandler.getValidStringCounter());
-
-        //print result to file
-        //todo: put into parallel thread stream
-        String resFileName = "result.txt";
-        File resultFile = new File(resFileName);
+        BufferedReader bufferedReader;
         try{
-            boolean r = resultFile.createNewFile();
-            if(!r){
-                 r =resultFile.delete();
-                 if(!r){
-                     System.out.println("Невозможно перезаписать файл вывода!");
-                     return;
-                 }
-                 r = resultFile.createNewFile();
-                 if(!r){
-                     System.out.println("Невозможно перезаписать файл вывода!");
-                     return;
-                 }
-            }
-            FileWriter wf = new FileWriter(resultFile);
-            BufferedWriter bf = new BufferedWriter(wf, 73728);
-            bf.write(groupHandler.getBigGroupCounter()+"\n");
-//            ArrayList<Group> groups = groupHandler.getGroupList(0);
-            ArrayList<Integer> sizes = groupHandler.getAllSizes();
-            ArrayList<String> strings;
-            ArrayList<Group> groups;
-            for(int size : sizes){
-                groups = groupHandler.getGroupList(size);
-                for(Group g : groups){
-                    HashSet<HashSet<String>> string = g.getStrings();
-                    for (HashSet<String> line : string){
-                        bf.write(line.toString());
+            FileReader fileReader = new FileReader(file);
+            bufferedReader = new BufferedReader(fileReader, 10*1024*1024*4);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("File not found!");
+            return;
+        }
+        String line;
+        String token;
+
+        HashSet<Group> groups = new HashSet<>();
+        HashMap<String,Group> map = new HashMap<>();
+
+        try{
+
+
+
+            while ((line = bufferedReader.readLine()) != null){
+                HashSet<String> string;
+                boolean validline = true;
+                //read by line
+                if(line.length()>0){//if line not empty
+                    StringTokenizer tokenizer = new StringTokenizer(line,";",false);
+                    if(tokenizer.countTokens()<2){//and contains more than 1 element
+                        continue;
+                    }
+                     string = new HashSet<>();
+                    while (tokenizer.hasMoreTokens()){
+                        token = tokenizer.nextToken();
+                        if(token.length()<3){
+                            validline = false;
+                            continue;
+                        }
+                        if(!token.matches(reg)){
+                            validline=false;
+                            continue;
+                        }
+                        if(!validline) continue;
+                        StringBuilder builder = new StringBuilder(token);
+                        builder.deleteCharAt(token.length()-1);
+                        builder.deleteCharAt(0);
+                        token = builder.toString();
+                        string.add(token);
+                        ///todo
 
                     }
+                }else {
+                    continue;
                 }
+
+
+
+                if(validline){
+
+                    Group group = new Group();
+                    group.addString(string);
+                    HashSet<Group> gset = new HashSet<>();
+                    for (String s :string){
+                        if(map.containsKey(s)){
+                            gset.add(map.get(s));
+                        }
+                    }
+                    if(gset.size()>0){
+                        for (Group g : gset){
+                            group.merge(g);
+                        }
+                        HashSet<String> tokens = group.getTokens();
+                        for(String tok : tokens){
+                            map.put(tok, group);
+                        }
+                        groups.add(group);
+                    }else {
+                        groups.add(group);
+                        for(String s :string){
+                            map.put(s,group);
+                        }
+                    }
+
+                }else {
+//                    continue;
+                }
+
+
+
             }
-            bf.close();
-            wf.close();
-            System.out.println("!!!\nРезультат сохранён в "+resFileName+"\n!!!");
+        } catch (IOException e) {
+            System.out.println("File IO broke!");
+            e.printStackTrace();
+            return;
+        }
+        String resultFileName = fileName + "_result.txt";
+        File resultFile = new File(resultFileName);
+        if(resultFile.exists()){
+            boolean a = resultFile.delete();
+            if (!a){
+                System.out.println("Cant delete existing file!");
+                return;
+            }
+        }
+        try {
+            boolean a = resultFile.createNewFile();
+            if(!a){
+                System.out.println("Can not create file for output!");
+                return;
+            }
+        } catch (IOException e) {
+            System.out.println("Cant create output file!");
+            e.printStackTrace();
+            return;
+        }
+        long bigGroupCounter =0;
+        try {
+            FileWriter fileWriter = new FileWriter(resultFile);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter, 1024*4);
+
+            //write result
+            long counter = 1;
+
+            List<Group> list = new ArrayList<>(groups);
+            list.sort(new Comparator<Group>() {
+                @Override
+                public int compare(Group group, Group t1) {
+                    return Integer.compare(group.size(), t1.size());
+                }
+            });
+            Collections.reverse(list);
+
+            for (Group g : list){
+                if(g.size()>1){
+                    bigGroupCounter++;
+                }
+//                fileWriter.write("Group: "+(counter++)+":\n");
+//                fileWriter.write(g.toString());
+
+//                System.out.println("Group: "+(counter++)+":\n");
+//                System.out.println(g.toString());
+
+                bufferedWriter.write("Group: "+(counter++)+":\n");
+                bufferedWriter.write(g.toString());
+            }
+
+
 
         } catch (IOException e) {
-            System.out.println("Невозможно создать файл для вывода результата!\nОшибка вывода!");
+            System.out.println("Cant write to file!");
             e.printStackTrace();
+            return;
         }
+        System.out.println("Groups with more than 2 strings: "+ bigGroupCounter);
+        long endTime = System.nanoTime();
 
-
-        long endAllTime = System.nanoTime();
-        long elapsedAllTime = endAllTime - startAllTime;
-        System.out.println("Время работы всей программы: "+ (double)elapsedAllTime/1_000_000_000);
-
+        System.out.println( (double)(endTime-startTime)/1_000_000_000 );
     }
 
 }
+//83510109514 200000644359490 100000075509630
+//200000644359490 83
+//100000564414389 200000543806071 83

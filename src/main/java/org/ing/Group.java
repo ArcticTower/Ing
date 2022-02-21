@@ -1,26 +1,86 @@
 package org.ing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 public class Group {
-    private final int id;
-    private final HashSet<String> tokens = new HashSet<>(3, 0.6f);
-    private final HashSet<HashSet<String>> strings = new HashSet<>();
-    private int stringCounter;
-    private int elementCounter;
 
-    Group(int id, HashSet<String> list){
-        this.id = id;
-        tokens.addAll(list);//add tokens to hashset
-        strings.add(new HashSet<>(list) );// add list to group
-        stringCounter =1;
-        elementCounter = list.size();
+    private HashSet<String> tokens;
+    private ArrayList<String> strings;
 
+    public ArrayList<String> getStrings() {
+        return strings;
+    }
+
+    public int size(){
+        if(strings == null) return 0;
+        return strings.size();
+    }
+
+
+
+    public HashSet<String> getTokens() {
+        return tokens;
+    }
+
+
+    private void putTokens(HashSet<String> set){
+        tokens.addAll(set);
+    }
+
+    private void putStrings(ArrayList<String> strs){
+        strings.addAll(strs);
+    }
+
+
+
+    Group(){
+        strings = new ArrayList<>();
+        tokens = new HashSet<>();
+    }
+
+    public void delete(){
+        strings = null;
+        tokens = null;
+    }
+
+    public void merge(Group g){
+        putTokens(g.getTokens());
+        putStrings(g.getStrings());
+        g.delete();
 
     }
 
-    // hashmap -> hashset -> hashcode -> ??? -> profit
+    @Override
+    public String toString(){
+        if (strings == null){
+            return "";
+        }
+        StringBuilder stringBuilder = new StringBuilder("");
+        for (String string : strings){
+            stringBuilder.append(string);
+            stringBuilder.append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public void addString(HashSet<String> str){
+        tokens.addAll(str);
+
+        StringBuilder st = new StringBuilder("");
+        for (String s : str){
+            st.append(s);
+            st.append(" ");
+        }
+        strings.add(st.toString());
+    }
+
+    public boolean containsAll(HashSet<String> set){
+        return tokens.containsAll(set);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -28,45 +88,11 @@ public class Group {
 
         Group group = (Group) o;
 
-        return strings != null ? strings.equals(group.strings) : group.strings == null;
+        return tokens.equals(group.tokens);
     }
 
     @Override
     public int hashCode() {
-        return strings != null ? strings.hashCode() : 0;
+        return tokens.hashCode();
     }
-
-    public void addTokens(HashSet<String> list){
-        tokens.addAll(list);
-        strings.add(list);
-        stringCounter++;
-        elementCounter+=list.size();
-    }
-
-    public ArrayList<String> getTokens(){
-        return new ArrayList<>(tokens);
-    }
-
-    public int getId(){
-        return id;
-    }
-
-    public int length(){
-        return tokens.size();
-    }
-
-    public int size(){return stringCounter;}
-
-    //comparator is for sorting
-    public int compare(Group g){
-        int len = length();
-        int glen = g.length();
-        if(len == glen) return 0;
-        return len>glen? 1:-1;
-    }
-
-    public HashSet<HashSet<String>> getStrings(){
-        return strings;
-    }
-
 }
