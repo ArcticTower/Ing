@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 
 public class Ing {
@@ -13,13 +15,30 @@ public class Ing {
     public static void main(String[] args) {
         long startAllTime = System.nanoTime();
         groupHandler = new GroupHandler();
-        stringHandler = new StringHandler(groupHandler);
+
         //check if input correct
         if(args.length<1){
-            System.out.println("Укажите файл аргументом программы");
-            System.out.println("Пример: java -jar Ing.jar lng.csv");
+            System.out.println("Укажите файл аргументом программы, можно указать выражение для его валидации");
+            System.out.println("Пример: java -jar Ing.jar lng.csv ^\\d+$");
             System.exit(1);
         }
+        String regx = null;
+        if (args.length<2){
+            regx = "^\"\\d+\\.\\d\"$";
+        }
+        if(args.length == 2){
+            regx = args[1];
+            try{
+                Pattern.compile(regx);
+            } catch (PatternSyntaxException exception){
+                System.out.println("Выражения для проверки не валидно!");
+                return;
+            }
+        }
+        if(regx!=null)
+            stringHandler = new StringHandler(groupHandler, regx);
+        else
+            stringHandler = new StringHandler(groupHandler);
         String fileName = args[0];
 
         System.out.println("Ing v1.0");

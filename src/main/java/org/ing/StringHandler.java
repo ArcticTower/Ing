@@ -13,13 +13,25 @@ public class StringHandler {
     private String target_string;
     private int stringCounter;
     private int validStringCounter;
+    String rx;
     private int badStringCounter;
     private HashMap<String,Integer> stringIdAndTokens;
     private final GroupHandler groupHandler;
 //    private LinkedList<String> badStrings;
 
-    StringHandler(GroupHandler groupHandler){
+    StringHandler(GroupHandler groupHandler, String regx ){
+        rx = regx;
         this.groupHandler = groupHandler;
+        stringCounter = 0;
+        validStringCounter=0;
+        badStringCounter =0;
+        stringIdAndTokens = new HashMap<>(100000,0.75f);
+//        badStrings = new LinkedList<>();
+    }
+
+    StringHandler(GroupHandler groupHandler ){
+        this.groupHandler = groupHandler;
+        rx = "^\"\\d+\\.\\d\"$";
         stringCounter = 0;
         validStringCounter=0;
         badStringCounter =0;
@@ -52,7 +64,7 @@ public class StringHandler {
                 continue;
             }
             //only valid element is "[0-9]+"
-            if(!str.matches("^\"\\d+\\.\\d\"$")){//^"\d+\.\d"$//^"\d+"$
+            if(!str.matches(rx)){//^"\d+\.\d"$//^"\d+"$
                 badStringCounter++;
 //                badStrings.add(stringCounter+" : "+target_string);
                 return;
