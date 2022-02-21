@@ -1,8 +1,5 @@
 package org.ing;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class StringHandler {
     //111;123;222
@@ -31,7 +28,7 @@ public class StringHandler {
 
     StringHandler(GroupHandler groupHandler ){
         this.groupHandler = groupHandler;
-        rx = "^\"\\d+\\.\\d\"$";
+        rx = "^\"\\d+\"$";
         stringCounter = 0;
         validStringCounter=0;
         badStringCounter =0;
@@ -42,9 +39,9 @@ public class StringHandler {
     private void tokenizeString(){
 
         LinkedList<Integer> groupIdsToAdd = new LinkedList<>();
-        ArrayList<String> list = new ArrayList<>();
-        ArrayList<String> noGroupTokens = new ArrayList<>();
-        boolean createNweGroup = false;
+        HashSet<String> list = new HashSet<>();
+        boolean flag = false;
+        HashSet<String> noGroupTokens = new HashSet<>();
         StringTokenizer tokenizer = new StringTokenizer(target_string,";",false);
 
 
@@ -58,7 +55,7 @@ public class StringHandler {
 
         StringBuilder element ;
 
-        for(int i =0;i<amount;i++){
+        for(int i =0;i<amount;i++){// max 3 iter.
             String str = tokenizer.nextToken();
             if(str.length()<3){
                 continue;
@@ -76,18 +73,28 @@ public class StringHandler {
 
             list.add(s);
             if(stringIdAndTokens.containsKey(s)){
-                groupIdsToAdd.add(stringIdAndTokens.get(s));////todo
+                groupIdsToAdd.add(stringIdAndTokens.get(s));
+                flag = true;
             } else {
-                createNweGroup = true;
                 noGroupTokens.add(s);
             }
         }
-        for(Integer id: groupIdsToAdd){
+
+        if(flag){
+            for(Integer id: groupIdsToAdd){// max 3 iter
+                groupHandler.addToGroup(id,list);
+            }
+            for(String s : noGroupTokens){
+
+            }
+        }
+
+        for(Integer id: groupIdsToAdd){// max 3 iter
             groupHandler.addToGroup(id,list);
         }
-        if(createNweGroup){
+        if(noGroupTokens.size()>0){
             int id = groupHandler.createGroup(list);
-            for (String s : noGroupTokens){
+            for (String s : noGroupTokens){// max 3 iter
                 stringIdAndTokens.put(s,id);
             }
         }

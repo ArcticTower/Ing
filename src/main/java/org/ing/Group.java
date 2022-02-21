@@ -5,24 +5,40 @@ import java.util.HashSet;
 
 public class Group {
     private final int id;
-    private HashSet<String> tokens = new HashSet<>(3, 0.6f);
-    private HashSet<HashSet<String>> strings = new HashSet<>();
+    private final HashSet<String> tokens = new HashSet<>(3, 0.6f);
+    private final HashSet<HashSet<String>> strings = new HashSet<>();
     private int stringCounter;
     private int elementCounter;
 
-    Group(int id, ArrayList<String> list){
+    Group(int id, HashSet<String> list){
         this.id = id;
         tokens.addAll(list);//add tokens to hashset
-        strings.add(new HashSet<String>(list) );// add list to group
+        strings.add(new HashSet<>(list) );// add list to group
         stringCounter =1;
         elementCounter = list.size();
 
 
     }
 
-    public void addTokens(ArrayList<String> list){
+    // hashmap -> hashset -> hashcode -> ??? -> profit
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Group group = (Group) o;
+
+        return strings != null ? strings.equals(group.strings) : group.strings == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return strings != null ? strings.hashCode() : 0;
+    }
+
+    public void addTokens(HashSet<String> list){
         tokens.addAll(list);
-        strings.add(new HashSet<String>(list));
+        strings.add(list);
         stringCounter++;
         elementCounter+=list.size();
     }
@@ -39,6 +55,8 @@ public class Group {
         return tokens.size();
     }
 
+    public int size(){return stringCounter;}
+
     //comparator is for sorting
     public int compare(Group g){
         int len = length();
@@ -48,7 +66,7 @@ public class Group {
     }
 
     public HashSet<HashSet<String>> getStrings(){
-        return new HashSet<HashSet<String>>(strings);
+        return strings;
     }
 
 }

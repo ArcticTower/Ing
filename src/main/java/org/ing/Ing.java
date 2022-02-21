@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -24,7 +25,7 @@ public class Ing {
         }
         String regx = null;
         if (args.length<2){
-            regx = "^\"\\d+\\.\\d\"$";
+            regx = "^\"\\d+\"$";
         }
         if(args.length == 2){
             regx = args[1];
@@ -41,50 +42,83 @@ public class Ing {
             stringHandler = new StringHandler(groupHandler);
         String fileName = args[0];
 
-        System.out.println("Ing v1.0");
+        System.out.println("Ing v1.2");
         System.out.println("Обработка файла: "+fileName);
 
         //open file for input
-        File file = new File(fileName);
-        FileReader fileReader;
+        Scanner scanner = null;
+        FileInputStream fileInputStream = null;
         try{
-            fileReader = new FileReader(file);
+            fileInputStream = new FileInputStream(fileName);
+            scanner = new Scanner(fileInputStream);
         } catch (FileNotFoundException e) {
             System.out.println("Файл не найден!");
-            return;
-        }
-        if (!file.canRead()){
-            System.out.println("Невозможно прочитать файл!");
+            e.printStackTrace();
             return;
         }
 
-        //read file
-        //todo: put into parallel thread stream
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String line;
+//        File file = new File(fileName);
+//        FileReader fileReader;
+//        try{
+//            fileReader = new FileReader(file);
+//        } catch (FileNotFoundException e) {
+//            System.out.println("Файл не найден!");
+//            return;
+//        }
+//        if (!file.canRead()){
+//            System.out.println("Невозможно прочитать файл!");
+//            return;
+//        }
         long startTime = System.nanoTime();
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                //todo: put calc into parallel thread stream
-                stringHandler.addString(line);
+        //read file
+        try{
+            while (scanner.hasNextLine()){
+                stringHandler.addString (scanner.nextLine());
             }
-        } catch (IOException e) {
-            System.out.println("Ошибка ввода!");
+            if(scanner.ioException()!=null){
+                System.out.println("ошибка вывода файла");
+                return;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Ошибка");
             return;
         }
-        try{
-            bufferedReader.close();
+
+        try {
+            fileInputStream.close();
+            scanner.close();
         } catch (IOException e) {
-            System.out.println("Ошибка вывода!");
             e.printStackTrace();
+            System.out.println("Ошибка!");
+            return;
         }
-        try{
-            fileReader.close();
-        } catch (IOException e) {
-            System.out.println("Ошибка вывода!");
-            e.printStackTrace();
-        }
+        //todo: put into parallel thread stream
+//        BufferedReader bufferedReader = new BufferedReader(fileReader);
+//        String line;
+
+//        try {
+//            while ((line = bufferedReader.readLine()) != null) {
+//                //todo: put calc into parallel thread stream
+//                stringHandler.addString(line);
+//            }
+//        } catch (IOException e) {
+//            System.out.println("Ошибка ввода!");
+//            e.printStackTrace();
+//            return;
+//        }
+//        try{
+//            bufferedReader.close();
+//        } catch (IOException e) {
+//            System.out.println("Ошибка вывода!");
+//            e.printStackTrace();
+//        }
+//        try{
+//            fileReader.close();
+//        } catch (IOException e) {
+//            System.out.println("Ошибка вывода!");
+//            e.printStackTrace();
+//        }
 
         //print output
         long endTime = System.nanoTime();
@@ -92,20 +126,6 @@ public class Ing {
         double elapsedTimeSeconds =(double) elapsedTime/1_000_000_000;
         System.out.println("Файл обработан за "+elapsedTimeSeconds+" секунд");
         System.out.println("Число групп с более чем 1 элементом: "+groupHandler.getBigGroupCounter());
-        System.out.println("10 наибольших групп: ");
-        groupHandler.sort();
-        ArrayList<Group> list = groupHandler.getGroupList(10);
-        for (Group g : list){
-            System.out.println("Группа: "+g.getId());
-            HashSet<HashSet<String>> strings = g.getStrings();
-            for (HashSet<String> str: strings){
-                for (String s: str) {
-                    System.out.print(s + " ");
-                }
-                System.out.println("");
-            }
-            System.out.println("");
-        }
         System.out.println("Групп всего: \t\t"+ groupHandler.getGroupCounter());
         System.out.println("Строк всего: \t\t"+ stringHandler.getStringCounter());
         //todo: put errors into parallel thread stream
@@ -136,19 +156,21 @@ public class Ing {
                  }
             }
             FileWriter wf = new FileWriter(resultFile);
-            BufferedWriter bf = new BufferedWriter(wf);
+            BufferedWriter bf = new BufferedWriter(wf, 73728);
             bf.write(groupHandler.getBigGroupCounter()+"\n");
-            ArrayList<Group> groups = groupHandler.getGroupList(0);
-            for(Group g : groups){
-                bf.write("Group "+g.getId()+":\n");
-                HashSet<HashSet<String>> strings = g.getStrings();
-                for (HashSet<String> str: strings){
-                    for (String s: str) {
-                        bf.write(s+" ");
-                    }
-                    bf.write("\n");
-                }
+//            ArrayList<Group> groups = groupHandler.getGroupList(0);
+            ArrayList<Integer> sizes = groupHandler.getAllSizes();
+            ArrayList<String> strings;
+            ArrayList<Group> groups;
+            for(int size : sizes){
+                groups = groupHandler.getGroupList(size);
+                for(Group g : groups){
+                    HashSet<HashSet<String>> string = g.getStrings();
+                    for (HashSet<String> line : string){
+                        bf.write(line.toString());
 
+                    }
+                }
             }
             bf.close();
             wf.close();
