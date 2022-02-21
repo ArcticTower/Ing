@@ -24,17 +24,34 @@ The result will be saved in your host as "result.txt"
 
 run "./deleteContainer.sh" if you want to delete cantainer
 
+# bad string example:
+
+ "83000854422549"
+ 
+ "8383"200000741652251"
+ 
+ "79855053897"83100000580443402";"200000133000191"
+
 # lng-big.csv:
+
 time to read file and convert to good format: 584.3s
+
 time to sort and write: 0.3s
+
 all time taken: 584.667s
+
 all groups: 107891
+
 good groups: 107891
+
 all strings: 12120000
+
 bad strings: 5447137
+
 good strings: 6672863
 
 biggest group :
+
 105036.2
 
 105036.1 105036.4
