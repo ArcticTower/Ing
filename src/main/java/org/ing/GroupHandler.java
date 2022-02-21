@@ -53,7 +53,7 @@ public class GroupHandler {
 
 
     public ArrayList<Group> getGroupList(int amount){
-        if(amount >0 && groupList.size()>=amount-1){
+        if(amount >0 && groupList.size()>=amount-1){//zero groups fix
             ArrayList<Group> groups = new ArrayList<>();
             for (int i =0; i<amount;i++){////todo: what if nothing
                 groups.add(groupList.get(i));
