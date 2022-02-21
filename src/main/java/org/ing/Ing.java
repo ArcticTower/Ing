@@ -91,11 +91,11 @@ public class Ing {
         System.out.println("Строк всего: \t\t"+ stringHandler.getStringCounter());
         //todo: put errors into parallel thread stream
         System.out.println("Строк забраковано: \t"+stringHandler.getBadStringCounter());
-        System.out.println("Забракованные строки: ");
-        LinkedList<String> badstr = stringHandler.getBadStrings();
-        for (String s : badstr){
-            System.out.println(s);
-        }
+//        System.out.println("Забракованные строки: ");
+//        LinkedList<String> badstr = stringHandler.getBadStrings();
+//        for (String s : badstr){
+//            System.out.println(s);
+//        }
         System.out.println("Строк одобрено: \t"+stringHandler.getValidStringCounter());
 
         //print result to file

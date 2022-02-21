@@ -16,7 +16,7 @@ public class StringHandler {
     private int badStringCounter;
     private HashMap<String,Integer> stringIdAndTokens;
     private final GroupHandler groupHandler;
-    private LinkedList<String> badStrings;
+//    private LinkedList<String> badStrings;
 
     StringHandler(GroupHandler groupHandler){
         this.groupHandler = groupHandler;
@@ -24,7 +24,7 @@ public class StringHandler {
         validStringCounter=0;
         badStringCounter =0;
         stringIdAndTokens = new HashMap<>(100000,0.75f);
-        badStrings = new LinkedList<>();
+//        badStrings = new LinkedList<>();
     }
 
     private void tokenizeString(){
@@ -40,7 +40,7 @@ public class StringHandler {
         //string with 1 element should be skipped by task
         if(amount<2){
             badStringCounter++;
-            badStrings.add(stringCounter+" : "+target_string);
+//            badStrings.add(stringCounter+" : "+target_string);
             return;
         }
 
@@ -54,7 +54,7 @@ public class StringHandler {
             //only valid element is "[0-9]+"
             if(!str.matches("^\"\\d+\\.\\d\"$")){//^"\d+\.\d"$//^"\d+"$
                 badStringCounter++;
-                badStrings.add(stringCounter+" : "+target_string);
+//                badStrings.add(stringCounter+" : "+target_string);
                 return;
             }
             element = new StringBuilder(str);
@@ -97,7 +97,7 @@ public class StringHandler {
     public int getBadStringCounter(){
         return badStringCounter;
     }
-    public LinkedList<String> getBadStrings(){
-        return badStrings;
-    }
+//    public LinkedList<String> getBadStrings(){
+//        return badStrings;
+//    }
 }
