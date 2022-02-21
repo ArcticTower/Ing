@@ -52,7 +52,7 @@ public class StringHandler {
                 continue;
             }
             //only valid element is "[0-9]+"
-            if(!str.matches("^\"\\d+\"$")){
+            if(!str.matches("^\"\\d+\\.\\d\"$")){//^"\d+\.\d"$//^"\d+"$
                 badStringCounter++;
                 badStrings.add(stringCounter+" : "+target_string);
                 return;

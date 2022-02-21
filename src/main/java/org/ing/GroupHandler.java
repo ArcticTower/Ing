@@ -53,9 +53,9 @@ public class GroupHandler {
 
 
     public ArrayList<Group> getGroupList(int amount){
-        if(amount >0){
+        if(amount >0 && groupList.size()>=amount-1){
             ArrayList<Group> groups = new ArrayList<>();
-            for (int i =0; i<amount;i++){
+            for (int i =0; i<amount;i++){////todo: what if nothing
                 groups.add(groupList.get(i));
             }
             return groups;
