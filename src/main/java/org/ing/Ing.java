@@ -15,7 +15,8 @@ public class Ing {
 
         long startTime = System.nanoTime();
         String fileName;
-        String reg = "^\"\\d+\\.\\d+\"$";
+        String reg = "^\"\\d+\"$";
+//        String reg = "^\"\\d+\\.\\d+\"$";
 
         if (args.length<1){
             System.out.println("Usage:");
@@ -56,7 +57,7 @@ public class Ing {
 
         String line;
 //        StringFilter stringFilter = new StringFilter();
-        HashMap<String, Node>map = new HashMap<>();
+        HashMap<String, Node>map = new HashMap<>(100_000);
         Matcher matcher;
         try{
             while ((line = bufferedReader.readLine()) != null){
@@ -132,8 +133,6 @@ public class Ing {
 
 
         HashSet<Node> groupNodes;
-//        ArrayList<Integer,ArrayList<Node>> sizeLinks = new ArrayList<>();
-//        Map<Integer, HashSet<HashSet<String>>> sizeMap = new TreeMap<>();
         ArrayList<HashSet<HashSet<String>>> sizedList = new ArrayList<>();
 
         for (Map.Entry<String,Node> entry : map.entrySet()){
@@ -150,11 +149,10 @@ public class Ing {
         Collections.sort(sizedList, new Comparator<HashSet<HashSet<String>>>() {
             @Override
             public int compare(HashSet<HashSet<String>> hashSets, HashSet<HashSet<String>> t1) {
-                if(hashSets.size() == t1.size())return 0;
-                if(hashSets.size()>t1.size()) return -1;
-                return 1;
+                return Integer.compare(t1.size(), hashSets.size());
             }
         });
+//        Collections.reverse(sizedList);
 
         int counter = 1;
         int bigCounter=0;
