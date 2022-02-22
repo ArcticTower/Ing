@@ -133,51 +133,99 @@ public class Ing {
         }
 
 
-        ArrayList<HashSet<HashSet<String>>> sizedList = new ArrayList<>();
+//        ArrayList</*group*/HashSet</*string*/HashSet<String>>> sizedList = new ArrayList<>();
+        /**hardlinked size list for optimization for small groups*/
+//        List< ArrayList</*group*/HashSet</*string*/HashSet<String>>>> sizedList = new ArrayList<>();
+//        for (int i =0;i<3;i--){
+//            sizedList.add(new ArrayList</*group*/HashSet</*string*/HashSet<String>>>());
+//        }
+
+        /**if size not expected use this*/
+        HashMap<Integer, ArrayList</*group*/HashSet</*string*/HashSet<String>>>>sizedList = new HashMap<>();
+        ArrayList<Integer> sizeLinks = new ArrayList<>();//mb hashmap
+
         Node n;
 
         Iterator<Map.Entry<String,Node>> iter = map.entrySet().iterator();
-//        HashSet<String> keys = new HashSet<>();
 
+//        HashSet<String> keys = new HashSet<>();
+        int bigs = 0;
         while (iter.hasNext()){
             Map.Entry<String,Node> entry = iter.next();
-//            if(keys.contains(entry.getKey())) continue;
             n = entry.getValue();
             if(!n.isWrapped()){
                     HashSet<HashSet<String>> group = new HashSet<>();
 
                     n.getConnectList(group);
-                    sizedList.add(group);
+                    int size = group.size();
+                    if (size>1) bigs++;
+                    if (sizeLinks.contains(size)){
+                        ArrayList<HashSet<HashSet<String>>> sizeGroup = sizedList.get(size);
+                        sizeGroup.add(group);
+                    }else {
+                        sizeLinks.add(size);
+                        ArrayList<HashSet<HashSet<String>>> sizeGroup = new ArrayList<>();
+                        sizeGroup.add(group);
+                        sizedList.put(size,sizeGroup);
+                    }
+//                    sizedList.add(group);
+
+//                    while (sizedList.size()+1<size){
+//                        sizedList.add(new ArrayList<>());
+//                    }
+//
+//                    ArrayList</*group*/HashSet</*string*/HashSet<String>>> sizeGroup = sizedList.get(size-1);
+//                    sizeGroup.add(group);
+
             }
         }
 
-
-        sizedList.sort(comparator);
+        System.out.println("Big groups: "+bigs);
+//        sizedList.sort(comparator);
+        sizeLinks.sort(Collections.reverseOrder());
 
         int counter = 0;
-        int bigCounter=0;
+
         try {
             FileWriter fileWriter = new FileWriter(resultFile);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter, 1024 * 4);
 
             //write result
+            bufferedWriter.write(bigs+"\n");
+//            int sizeCat = sizedList.size()-1;
+            for (int size : sizeLinks){
+                ArrayList</*group*/HashSet</*string*/HashSet<String>>> listOfGroups = sizedList.get(size);
+                for (HashSet<HashSet<String>> grp : listOfGroups){
+                    counter++;
+                    bufferedWriter.write("Group "+counter+":\n");
+                    for (HashSet<String> string : grp){
 
-            for (HashSet<HashSet<String>> gr : sizedList){
-                counter++;
-                bufferedWriter.write("Group "+(counter)+":\n");
-
-                if(gr.size()>1) bigCounter++;
-
-                for (HashSet<String> str : gr){
-
-                    for (String word : str){
-                        bufferedWriter.write(word+" ");
+                        for(String word : string){
+                            bufferedWriter.write(word);
+                            bufferedWriter.write(" ");
+                        }
+                        bufferedWriter.write("\n");
                     }
-                    bufferedWriter.write("\n");
                 }
-
             }
-
+//            for(;sizeCat>=0;sizeCat--) {
+//                ArrayList</*group*/HashSet</*string*/HashSet<String>>> local_size_group = sizedList.get(sizeCat);
+//                if (local_size_group.isEmpty()) continue;
+//                for ( HashSet<HashSet<String>> gr : local_size_group) {
+//                    counter++;
+//                    bufferedWriter.write("Group " + (counter) + ":\n");
+//
+//
+//                    for (HashSet<String> str : gr) {
+//
+//                        for (String word : str) {
+//                            bufferedWriter.write(word + " ");
+//                        }
+//                        bufferedWriter.write("\n");
+//                    }
+//
+//                }
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -185,18 +233,12 @@ public class Ing {
         long endTime = System.nanoTime();
         double epsTime = (double)(endTime - startTime)/1_000_000_000;
         System.out.println("All groups: "+counter );
-        System.out.println("Big groups: "+bigCounter );
+
         System.out.println("Time: "+epsTime);
 
     }
 
-    static Comparator<HashSet<HashSet<String>>> comparator= new Comparator<>(){
 
-        @Override
-        public int compare(HashSet<HashSet<String>> hashSets, HashSet<HashSet<String>> t1) {
-            return Integer.compare(t1.size(), hashSets.size());
-        }
-    };
 }
 
 
