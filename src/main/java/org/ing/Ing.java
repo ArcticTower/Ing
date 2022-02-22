@@ -3,6 +3,7 @@ package org.ing;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -33,6 +34,8 @@ public class Ing {
                 return;
             }
         }
+        Pattern pattern = Pattern.compile(reg);
+
         File file;
         if(fileName == null){
             System.out.println("File not valid");
@@ -54,7 +57,7 @@ public class Ing {
         String line;
 //        StringFilter stringFilter = new StringFilter();
         HashMap<String, Node>map = new HashMap<>();
-
+        Matcher matcher;
         try{
             while ((line = bufferedReader.readLine()) != null){
                 if(line.length()<3) continue;
@@ -67,10 +70,13 @@ public class Ing {
                 HashSet<String> sb = new HashSet<>();
                 for(int i =0;i<count;i++){
                     String tok = tokenizer.nextToken();
-
-                    if(!tok.matches(reg)){
+                    matcher = pattern.matcher(tok);
+                    if(!matcher.matches()){
                         continue;
                     }
+//                    if(!tok.matches(reg)){
+//                        continue;
+//                    }
                     StringBuilder stringBuilder = new StringBuilder(tok);
                     stringBuilder.deleteCharAt(tok.length()-1);
                     stringBuilder.deleteCharAt(0);
