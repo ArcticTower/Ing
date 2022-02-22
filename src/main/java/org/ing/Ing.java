@@ -75,13 +75,14 @@ public class Ing {
                     if(!matcher.matches()){
                         continue;
                     }
-//                    if(!tok.matches(reg)){
-//                        continue;
-//                    }
-                    StringBuilder stringBuilder = new StringBuilder(tok);
-                    stringBuilder.deleteCharAt(tok.length()-1);
-                    stringBuilder.deleteCharAt(0);
-                    tok = stringBuilder.toString();
+                    if(!tok.matches(reg)){ // better to pre-compile
+                        continue;
+                    }
+                    /**this block for delitiong "" around the number*/
+//                    StringBuilder stringBuilder = new StringBuilder(tok);
+//                    stringBuilder.deleteCharAt(tok.length()-1);
+//                    stringBuilder.deleteCharAt(0);
+//                    tok = stringBuilder.toString();
 
                     sb.add(tok);
                     if(map.containsKey(tok)){
