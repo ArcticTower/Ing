@@ -6,7 +6,6 @@ import java.util.HashSet;
 
 public class Node {
     private ArrayList<Node> connected = new ArrayList<>();
-//    private HashSet<Node> connected = new HashSet<>();
     private HashSet<String> string;
     boolean wrapped = false;
 
