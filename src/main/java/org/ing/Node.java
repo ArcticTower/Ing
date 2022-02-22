@@ -13,11 +13,13 @@ public class Node {
         string = s;
     }
 
-    public void getConnectList(HashSet<HashSet<String>> set){
+    public void getConnectList(HashSet<HashSet<String>> set ){
         set.add(string);
+//        keys.addAll(string);
         wrap();
         for (Node n : connected){
             if(!n.isWrapped()){
+
                 n.getConnectList(set);
             }
 

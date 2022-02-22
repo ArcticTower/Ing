@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 public class Ing {
 
@@ -15,8 +14,8 @@ public class Ing {
 
         long startTime = System.nanoTime();
         String fileName;
-        String reg = "^\"\\d+\"$";
-//        String reg = "^\"\\d+\\.\\d+\"$";
+//        String reg = "^\"\\d+\"$";
+        String reg = "^\"\\d+\\.\\d+\"$";
 
         if (args.length<1){
             System.out.println("Usage:");
@@ -58,6 +57,7 @@ public class Ing {
         String line;
 //        StringFilter stringFilter = new StringFilter();
         HashMap<String, Node>map = new HashMap<>(100_000);
+
         Matcher matcher;
         try{
             while ((line = bufferedReader.readLine()) != null){
@@ -132,29 +132,28 @@ public class Ing {
         }
 
 
-        HashSet<Node> groupNodes;
         ArrayList<HashSet<HashSet<String>>> sizedList = new ArrayList<>();
+        Node n;
 
-        for (Map.Entry<String,Node> entry : map.entrySet()){
+        Iterator<Map.Entry<String,Node>> iter = map.entrySet().iterator();
+//        HashSet<String> keys = new HashSet<>();
 
-            Node n = entry.getValue();
+        while (iter.hasNext()){
+            Map.Entry<String,Node> entry = iter.next();
+//            if(keys.contains(entry.getKey())) continue;
+            n = entry.getValue();
             if(!n.isWrapped()){
-                HashSet<HashSet<String>> group = new HashSet<>();
-                n.getConnectList(group);
-                sizedList.add(group);
-            }
+                    HashSet<HashSet<String>> group = new HashSet<>();
 
+                    n.getConnectList(group);
+                    sizedList.add(group);
+            }
         }
 
-        Collections.sort(sizedList, new Comparator<HashSet<HashSet<String>>>() {
-            @Override
-            public int compare(HashSet<HashSet<String>> hashSets, HashSet<HashSet<String>> t1) {
-                return Integer.compare(t1.size(), hashSets.size());
-            }
-        });
-//        Collections.reverse(sizedList);
 
-        int counter = 1;
+        sizedList.sort(comparator);
+
+        int counter = 0;
         int bigCounter=0;
         try {
             FileWriter fileWriter = new FileWriter(resultFile);
@@ -163,7 +162,8 @@ public class Ing {
             //write result
 
             for (HashSet<HashSet<String>> gr : sizedList){
-                bufferedWriter.write("Group "+(counter++)+":\n");
+                counter++;
+                bufferedWriter.write("Group "+(counter)+":\n");
 
                 if(gr.size()>1) bigCounter++;
 
@@ -188,6 +188,14 @@ public class Ing {
         System.out.println("Time: "+epsTime);
 
     }
+
+    static Comparator<HashSet<HashSet<String>>> comparator= new Comparator<>(){
+
+        @Override
+        public int compare(HashSet<HashSet<String>> hashSets, HashSet<HashSet<String>> t1) {
+            return Integer.compare(t1.size(), hashSets.size());
+        }
+    };
 }
 
 
