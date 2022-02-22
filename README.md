@@ -24,7 +24,7 @@ The result will be saved in your host as "result.txt"
 
 run "./deleteContainer.sh" if you want to delete cantainer
 
-# bad string example:
+## bad string example:
 
   "";
 
@@ -34,9 +34,9 @@ run "./deleteContainer.sh" if you want to delete cantainer
  
  "79855053897"83100000580443402";"200000133000191"
 
-# lng-big.csv:
+## lng-big.csv:
 
-all time taken: 20.7
+all time taken: 17.5
 
 all groups: 105036
 
@@ -55,7 +55,7 @@ something like
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-lng.csv:
+## lng.csv:
 
 runtime: 5.3s
 
